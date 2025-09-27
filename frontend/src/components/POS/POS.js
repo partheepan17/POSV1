@@ -70,7 +70,7 @@ const POS = () => {
   const { data: customerResults = [] } = useQuery(
     ['customers-search', customerSearch],
     () => customerSearch.length > 1 ?
-      axios.get(`/api/customers/search/${encodeURIComponent(customerSearch)}`).then(res => res.data) : [],
+      axios.get(`/customers/search/${encodeURIComponent(customerSearch)}`).then(res => res.data) : [],
     {
       enabled: customerSearch.length > 1,
       staleTime: 10000
