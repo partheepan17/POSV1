@@ -25,7 +25,14 @@ import './App.css';
 
 // Configure axios
 const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || '/api';
-axios.defaults.baseURL = API_BASE_URL;
+console.log('Setting axios baseURL to:', API_BASE_URL);
+
+// In production/preview environment, use relative URLs
+if (window.location.hostname !== 'localhost') {
+  axios.defaults.baseURL = '/api';
+} else {
+  axios.defaults.baseURL = API_BASE_URL;
+}
 
 // Add request interceptor to include auth token
 axios.interceptors.request.use((config) => {
