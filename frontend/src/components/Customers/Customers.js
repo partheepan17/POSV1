@@ -14,7 +14,7 @@ const Customers = () => {
 
   const { data: customers = [], isLoading } = useQuery(
     ['customers'],
-    () => axios.get('/api/customers').then(res => res.data)
+    () => axios.get('/customers').then(res => res.data)
   );
 
   const filteredCustomers = customers.filter(customer =>
