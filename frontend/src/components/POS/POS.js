@@ -99,7 +99,7 @@ const POS = () => {
     if (!barcode.trim()) return;
 
     try {
-      const response = await axios.get(`/api/products/barcode/${encodeURIComponent(barcode)}`);
+      const response = await axios.get(`/products/barcode/${encodeURIComponent(barcode)}`);
       const product = response.data;
       await addItem(product, 1, customer?.type || 'Normal');
       
