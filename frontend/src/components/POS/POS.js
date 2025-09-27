@@ -51,7 +51,7 @@ const POS = () => {
   // Fetch products
   const { data: products = [], refetch: refetchProducts } = useQuery(
     ['products'],
-    () => axios.get('/api/products').then(res => res.data),
+    () => axios.get('/products').then(res => res.data),
     { staleTime: 30000 }
   );
 
