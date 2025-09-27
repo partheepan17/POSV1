@@ -9,7 +9,7 @@ const Inventory = () => {
 
   const { data: products = [], isLoading } = useQuery(
     ['products'],
-    () => axios.get('/api/products').then(res => res.data)
+    () => axios.get('/products').then(res => res.data)
   );
 
   // Filter products by stock status
