@@ -229,6 +229,15 @@ const useCartStore = create(
       return { success: false, error };
     }
   }
-}));
+}),
+{
+  name: 'cart-storage',
+  partialize: (state) => ({ 
+    items: state.items, 
+    customer: state.customer, 
+    paymentMethod: state.paymentMethod 
+  }),
+}
+));
 
 export default useCartStore;
