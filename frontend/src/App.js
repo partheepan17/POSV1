@@ -24,10 +24,8 @@ import Settings from './components/Settings/Settings';
 import './App.css';
 
 // Configure axios
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || '';
-if (API_BASE_URL) {
-  axios.defaults.baseURL = API_BASE_URL;
-}
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || '/api';
+axios.defaults.baseURL = API_BASE_URL;
 
 // Add request interceptor to include auth token
 axios.interceptors.request.use((config) => {
