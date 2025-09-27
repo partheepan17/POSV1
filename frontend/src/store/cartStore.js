@@ -30,7 +30,7 @@ const useCartStore = create(
         items[existingItemIndex].quantity += quantity;
         
         // Recalculate price for new quantity
-        const newPriceResponse = await axios.post('/api/calculate-price', {
+        const newPriceResponse = await axios.post('/calculate-price', {
           product_id: product.id,
           quantity: items[existingItemIndex].quantity,
           customer_type: customerType
