@@ -16,9 +16,9 @@ const useAuthStore = create((set, get) => ({
       formData.append('username', username);
       formData.append('password', password);
       
-      console.log('Sending login request to /api/auth/token');
+      console.log('Sending login request to /auth/token');
       
-      const response = await axios.post('/api/auth/token', formData);
+      const response = await axios.post('/auth/token', formData);
       const { access_token } = response.data;
       
       console.log('Login API successful, token received');
