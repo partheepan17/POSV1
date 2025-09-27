@@ -14,7 +14,7 @@ const useCartStore = create(
   addItem: async (product, quantity = 1, customerType = 'Normal') => {
     try {
       // Calculate price with discounts
-      const priceResponse = await axios.post('/api/calculate-price', {
+      const priceResponse = await axios.post('/calculate-price', {
         product_id: product.id,
         quantity,
         customer_type: customerType
@@ -83,7 +83,7 @@ const useCartStore = create(
         const item = items[itemIndex];
         
         // Recalculate price
-        const priceResponse = await axios.post('/api/calculate-price', {
+        const priceResponse = await axios.post('/calculate-price', {
           product_id: item.product.id,
           quantity,
           customer_type: customerType
@@ -128,7 +128,7 @@ const useCartStore = create(
     
     for (let i = 0; i < items.length; i++) {
       try {
-        const priceResponse = await axios.post('/api/calculate-price', {
+        const priceResponse = await axios.post('/calculate-price', {
           product_id: items[i].product.id,
           quantity: items[i].quantity,
           customer_type: customerType
