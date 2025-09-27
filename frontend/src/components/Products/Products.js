@@ -19,7 +19,7 @@ const Products = () => {
 
   const { data: categories = [] } = useQuery(
     ['categories'],
-    () => axios.get('/api/categories').then(res => res.data)
+    () => axios.get('/categories').then(res => res.data)
   );
 
   const filteredProducts = products.filter(product =>
