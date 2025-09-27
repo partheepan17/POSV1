@@ -9,7 +9,7 @@ const Sales = () => {
 
   const { data: sales = [], isLoading } = useQuery(
     ['sales'],
-    () => axios.get('/api/sales').then(res => res.data)
+    () => axios.get('/sales').then(res => res.data)
   );
 
   const formatDate = (dateString) => {
