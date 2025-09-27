@@ -24,7 +24,7 @@ const useAuthStore = create((set, get) => ({
       console.log('Login API successful, token received');
       
       // Get user info
-      const userResponse = await axios.get('/api/auth/me', {
+      const userResponse = await axios.get('/auth/me', {
         headers: { Authorization: `Bearer ${access_token}` }
       });
       
