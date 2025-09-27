@@ -173,8 +173,8 @@ const CustomerModal = ({ customer, onClose, onSave, t }) => {
 
   const mutation = useMutation(
     (data) => customer 
-      ? axios.put(`/api/customers/${customer.id}`, data)
-      : axios.post('/api/customers', data),
+      ? axios.put(`/customers/${customer.id}`, data)
+      : axios.post('/customers', data),
     {
       onSuccess: () => {
         toast.success(customer ? 'Customer updated successfully' : 'Customer created successfully');
