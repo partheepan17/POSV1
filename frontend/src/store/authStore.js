@@ -17,6 +17,8 @@ const useAuthStore = create((set, get) => ({
       formData.append('password', password);
       
       console.log('Sending login request to /auth/token');
+      console.log('Axios baseURL:', axios.defaults.baseURL);
+      console.log('Full URL will be:', (axios.defaults.baseURL || '') + '/auth/token');
       
       const response = await axios.post('/auth/token', formData);
       const { access_token } = response.data;
