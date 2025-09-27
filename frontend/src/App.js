@@ -23,16 +23,22 @@ import Settings from './components/Settings/Settings';
 // CSS
 import './App.css';
 
-// Configure axios
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || '/api';
+// Configure axios for different environments
+let API_BASE_URL = '';
+
+// Check if we're in development (localhost) or production/preview
+if (window.location.hostname === 'localhost') {
+  // Development environment - use proxy
+  API_BASE_URL = '/api';
+} else {
+  // Production/preview environment - use /api with current domain
+  API_BASE_URL = '/api';
+}
+
+console.log('Environment:', window.location.hostname);
 console.log('Setting axios baseURL to:', API_BASE_URL);
 
-// In production/preview environment, use relative URLs
-if (window.location.hostname !== 'localhost') {
-  axios.defaults.baseURL = '/api';
-} else {
-  axios.defaults.baseURL = API_BASE_URL;
-}
+axios.defaults.baseURL = API_BASE_URL;
 
 // Add request interceptor to include auth token
 axios.interceptors.request.use((config) => {
