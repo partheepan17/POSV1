@@ -3,7 +3,9 @@ import { persist } from 'zustand/middleware';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-const useCartStore = create((set, get) => ({
+const useCartStore = create(
+  persist(
+    (set, get) => ({
   items: [],
   customer: null,
   paymentMethod: 'cash',
