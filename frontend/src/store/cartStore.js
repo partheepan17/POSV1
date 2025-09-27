@@ -217,7 +217,7 @@ const useCartStore = create(
         payment_method: paymentMethod
       };
       
-      const response = await axios.post('/api/sales', saleData);
+      const response = await axios.post('/sales', saleData);
       
       toast.success('Sale completed successfully!');
       get().clearCart();
