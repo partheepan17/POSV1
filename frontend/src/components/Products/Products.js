@@ -14,7 +14,7 @@ const Products = () => {
 
   const { data: products = [], isLoading } = useQuery(
     ['products'],
-    () => axios.get('/api/products').then(res => res.data)
+    () => axios.get('/products').then(res => res.data)
   );
 
   const { data: categories = [] } = useQuery(
