@@ -196,8 +196,8 @@ const ProductModal = ({ product, categories, onClose, onSave, t }) => {
 
   const mutation = useMutation(
     (data) => product 
-      ? axios.put(`/api/products/${product.id}`, data)
-      : axios.post('/api/products', data),
+      ? axios.put(`/products/${product.id}`, data)
+      : axios.post('/products', data),
     {
       onSuccess: () => {
         toast.success(product ? 'Product updated successfully' : 'Product created successfully');
