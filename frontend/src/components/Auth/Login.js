@@ -21,10 +21,18 @@ const Login = () => {
       return;
     }
     
+    console.log('Login form submitted with:', formData.username);
+    
     const result = await login(formData.username, formData.password);
     
+    console.log('Login result:', result);
+    
     if (!result.success) {
+      console.error('Login failed with error:', result.error);
       toast.error(result.error || 'Login failed');
+    } else {
+      console.log('Login successful, should redirect to dashboard');
+      toast.success('Login successful!');
     }
   };
 
