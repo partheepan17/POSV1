@@ -59,7 +59,7 @@ const POS = () => {
   const { data: searchResults = [] } = useQuery(
     ['products-search', searchQuery],
     () => searchQuery.length > 2 ? 
-      axios.get(`/api/products/search/${encodeURIComponent(searchQuery)}`).then(res => res.data) : [],
+      axios.get(`/products/search/${encodeURIComponent(searchQuery)}`).then(res => res.data) : [],
     { 
       enabled: searchQuery.length > 2,
       staleTime: 10000 
