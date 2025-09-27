@@ -49,41 +49,31 @@ const useAuthStore = create((set, get) => ({
       };
     }
   },
+  
+  logout: () => {
+    set({ user: null, token: null, isAuthenticated: false });
+  },
+  
+  checkAuth: async () => {
+    const { token } = get();
+    if (!token) return false;
+    
+    try {
+      const response = await axios.get('/api/auth/me', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       
-      logout: () => {
-        set({ user: null, token: null, isAuthenticated: false });
-      },
-      
-      checkAuth: async () => {
-        const { token } = get();
-        if (!token) return false;
-        
-        try {
-          const response = await axios.get('/api/auth/me', {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          
-          set({ user: response.data, isAuthenticated: true });
-          return true;
-        } catch (error) {
-          set({ user: null, token: null, isAuthenticated: false });
-          return false;
-        }
-      },
-      
-      clearAuth: () => {
-        set({ user: null, token: null, isAuthenticated: false });
-      }
-    }),
-    {
-      name: 'auth-storage',
-      partialize: (state) => ({ 
-        token: state.token, 
-        user: state.user, 
-        isAuthenticated: state.isAuthenticated 
-      }),
+      set({ user: response.data, isAuthenticated: true });
+      return true;
+    } catch (error) {
+      set({ user: null, token: null, isAuthenticated: false });
+      return false;
     }
-  )
-);
+  },
+  
+  clearAuth: () => {
+    set({ user: null, token: null, isAuthenticated: false });
+  }
+}));
 
 export default useAuthStore;
