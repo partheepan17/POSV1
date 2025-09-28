@@ -32,8 +32,12 @@ const Layout = () => {
     { name: t('pos'), href: '/pos', icon: ShoppingCart, testId: 'nav-pos' },
     { name: t('products'), href: '/products', icon: Package, testId: 'nav-products' },
     { name: t('customers'), href: '/customers', icon: Users, testId: 'nav-customers' },
+    { name: 'Suppliers', href: '/suppliers', icon: Building2, testId: 'nav-suppliers' },
+    { name: 'Purchasing', href: '/purchasing', icon: ShoppingBag, testId: 'nav-purchasing' },
     { name: t('sales'), href: '/sales', icon: Receipt, testId: 'nav-sales' },
     { name: t('inventory'), href: '/inventory', icon: Warehouse, testId: 'nav-inventory' },
+    { name: 'Advanced Inventory', href: '/advanced-inventory', icon: PackageCheck, testId: 'nav-advanced-inventory' },
+    { name: 'Analytics', href: '/analytics', icon: TrendingUp, testId: 'nav-analytics' },
     { name: t('reports'), href: '/reports', icon: BarChart3, testId: 'nav-reports' },
     { name: t('settings'), href: '/settings', icon: Settings, testId: 'nav-settings' },
   ];
