@@ -35,7 +35,7 @@ db = get_db()
 async def get_batches(
     product_id: Optional[str] = None,
     expiring_soon: Optional[bool] = None,
-    current_user: User = Depends(get_current_user)
+    current_user = Depends(get_current_user_dependency())
 ):
     filter_query = {"is_active": True}
     
