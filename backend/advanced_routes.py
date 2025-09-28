@@ -1,5 +1,5 @@
 # Advanced Routes for Phase 2
-from fastapi import APIRouter, HTTPException, Depends, Query
+from fastapi import APIRouter, HTTPException, Depends, Query, Request
 from typing import Optional, List, Dict, Any
 from datetime import datetime, date, timedelta
 from models import *
@@ -11,6 +11,24 @@ import json
 
 # Create router
 router = APIRouter(prefix="/api", tags=["Phase 2"])
+
+# Dependency functions - will be replaced with actual imports in production
+def get_db():
+    # This will be injected by the main app
+    from motor.motor_asyncio import AsyncIOMotorClient
+    import os
+    MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
+    DATABASE_NAME = os.getenv("DATABASE_NAME", "pos_system")
+    client = AsyncIOMotorClient(MONGO_URL)
+    return client[DATABASE_NAME]
+
+def get_current_user_dependency():
+    # Import here to avoid circular import
+    from server import get_current_user
+    return get_current_user
+
+# Get database instance
+db = get_db()
 
 # Batch Management Routes
 @router.get("/batches")
