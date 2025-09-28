@@ -513,16 +513,6 @@ async def calculate_price(data: dict, current_user: User = Depends(get_current_u
 
 # Include advanced routes
 from advanced_routes import router as advanced_router
-advanced_router.dependencies = []  # Clear any existing dependencies
-
-# Add dependencies to advanced routes
-@advanced_router.middleware("http")
-async def add_dependencies(request, call_next):
-    # Add database and auth dependencies to request state
-    request.state.db = db
-    request.state.get_current_user = get_current_user
-    response = await call_next(request)
-    return response
 
 app.include_router(advanced_router)
 
