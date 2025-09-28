@@ -136,6 +136,10 @@ function App() {
               <Route path="sales" element={<Sales />} />
               <Route path="inventory" element={<Inventory />} />
               <Route path="reports" element={<Reports />} />
+              <Route path="suppliers" element={<Suppliers />} />
+              <Route path="purchasing" element={<Purchasing />} />
+              <Route path="advanced-inventory" element={<AdvancedInventory />} />
+              <Route path="analytics" element={<Analytics />} />
               <Route path="settings" element={<Settings />} />
             </Route>
             
