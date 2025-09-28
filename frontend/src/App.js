@@ -18,7 +18,10 @@ import Customers from './components/Customers/Customers';
 import Sales from './components/Sales/Sales';
 import Inventory from './components/Inventory/Inventory';
 import Reports from './components/Reports/Reports';
-import Settings from './components/Settings/Settings';
+import Suppliers from './components/Suppliers/Suppliers';
+import Purchasing from './components/Purchasing/Purchasing';
+import AdvancedInventory from './components/AdvancedInventory/AdvancedInventory';
+import Analytics from './components/Analytics/Analytics';
 
 // CSS
 import './App.css';
