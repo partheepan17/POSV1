@@ -14,6 +14,9 @@ import asyncio
 from bson import ObjectId
 import json
 
+# Import advanced routes
+from advanced_routes import router as advanced_router
+
 # Initialize FastAPI
 app = FastAPI(title="POS System API", version="1.0.0")
 
