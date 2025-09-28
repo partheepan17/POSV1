@@ -13,7 +13,11 @@ import {
   LogOut,
   Menu,
   X,
-  Globe
+  Globe,
+  Building2,
+  ShoppingBag,
+  PackageCheck,
+  TrendingUp
 } from 'lucide-react';
 import useAuthStore from '../../store/authStore';
 
