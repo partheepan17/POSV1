@@ -511,6 +511,9 @@ async def calculate_price(data: dict, current_user: User = Depends(get_current_u
         "discount_info": discount_info
     }
 
+# Include advanced routes
+app.include_router(advanced_router)
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)
