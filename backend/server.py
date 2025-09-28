@@ -508,10 +508,162 @@ async def calculate_price(data: dict, current_user: User = Depends(get_current_u
         "discount_info": discount_info
     }
 
-# Include advanced routes
-from advanced_routes import router as advanced_router
+# Phase 2 Routes - Simplified inline implementation
+@app.get("/api/suppliers")
+async def get_suppliers(current_user: User = Depends(get_current_user)):
+    cursor = db.suppliers.find({"is_active": True})
+    suppliers = []
+    async for supplier in cursor:
+        supplier["id"] = str(supplier["_id"])
+        del supplier["_id"]
+        suppliers.append(supplier)
+    return suppliers
 
-app.include_router(advanced_router)
+@app.post("/api/suppliers")
+async def create_supplier(supplier_data: Dict[str, Any], current_user: User = Depends(get_current_user)):
+    supplier_data["_id"] = str(uuid.uuid4())
+    supplier_data["created_at"] = datetime.utcnow()
+    
+    await db.suppliers.insert_one(supplier_data)
+    return {"message": "Supplier created successfully", "supplier_id": supplier_data["_id"]}
+
+@app.get("/api/batches")
+async def get_batches(current_user: User = Depends(get_current_user)):
+    cursor = db.batches.find({"is_active": True})
+    batches = []
+    async for batch in cursor:
+        batch["id"] = str(batch["_id"])
+        del batch["_id"]
+        batches.append(batch)
+    return batches
+
+@app.get("/api/batches/expiry-alerts")
+async def get_expiry_alerts(days: int = 30, current_user: User = Depends(get_current_user)):
+    from datetime import date
+    future_date = datetime.utcnow() + timedelta(days=days)
+    
+    cursor = db.batches.find({
+        "expiry_date": {"$lte": future_date.date().isoformat()},
+        "current_quantity": {"$gt": 0},
+        "is_active": True
+    })
+    
+    alerts = []
+    async for batch in cursor:
+        batch["id"] = str(batch["_id"])
+        del batch["_id"]
+        # Add product name lookup would be done here
+        batch["product_name"] = f"Product {batch['product_id']}"
+        alerts.append(batch)
+    
+    return alerts
+
+@app.get("/api/purchase-orders")
+async def get_purchase_orders(current_user: User = Depends(get_current_user)):
+    cursor = db.purchase_orders.find({}).sort("created_at", -1)
+    pos = []
+    async for po in cursor:
+        po["id"] = str(po["_id"])
+        del po["_id"]
+        pos.append(po)
+    return pos
+
+@app.post("/api/purchase-orders")
+async def create_purchase_order(po_data: Dict[str, Any], current_user: User = Depends(get_current_user)):
+    # Generate PO number
+    count = await db.purchase_orders.count_documents({})
+    po_data["po_number"] = f"PO{count + 1:06d}"
+    po_data["_id"] = str(uuid.uuid4())
+    po_data["created_by"] = current_user.id
+    po_data["created_at"] = datetime.utcnow()
+    
+    await db.purchase_orders.insert_one(po_data)
+    return {"message": "Purchase order created successfully", "po_id": po_data["_id"], "po_number": po_data["po_number"]}
+
+@app.get("/api/stores")
+async def get_stores(current_user: User = Depends(get_current_user)):
+    cursor = db.stores.find({"is_active": True})
+    stores = []
+    async for store in cursor:
+        store["id"] = str(store["_id"])
+        del store["_id"]
+        stores.append(store)
+    return stores
+
+@app.post("/api/stores")
+async def create_store(store_data: Dict[str, Any], current_user: User = Depends(get_current_user)):
+    store_data["_id"] = str(uuid.uuid4())
+    store_data["created_at"] = datetime.utcnow()
+    
+    await db.stores.insert_one(store_data)
+    return {"message": "Store created successfully", "store_id": store_data["_id"]}
+
+@app.get("/api/wastage")
+async def get_wastage_records(current_user: User = Depends(get_current_user)):
+    cursor = db.wastage.find({}).sort("created_at", -1).limit(50)
+    records = []
+    async for record in cursor:
+        record["id"] = str(record["_id"])
+        del record["_id"]
+        records.append(record)
+    return records
+
+@app.post("/api/wastage")
+async def record_wastage(wastage_data: Dict[str, Any], current_user: User = Depends(get_current_user)):
+    wastage_data["_id"] = str(uuid.uuid4())
+    wastage_data["recorded_by"] = current_user.id
+    wastage_data["created_at"] = datetime.utcnow()
+    
+    # Update inventory
+    await db.products.update_one(
+        {"_id": wastage_data["product_id"]},
+        {"$inc": {"stock_quantity": -wastage_data["quantity"]}}
+    )
+    
+    await db.wastage.insert_one(wastage_data)
+    return {"message": "Wastage recorded successfully", "record_id": wastage_data["_id"]}
+
+@app.get("/api/analytics/sales")
+async def get_sales_analytics(
+    start_date: str,
+    end_date: str,
+    store_id: Optional[str] = None,
+    current_user: User = Depends(get_current_user)
+):
+    from datetime import date
+    # Mock analytics data for now
+    return {
+        "period": f"{start_date} to {end_date}",
+        "total_sales": 45230.50,
+        "total_transactions": 287,
+        "average_transaction": 157.60,
+        "profit_margin": 25.5,
+        "top_products": [
+            {"_id": "prod1", "quantity_sold": 15, "revenue": 10497.50},
+            {"_id": "prod2", "quantity_sold": 8, "revenue": 7199.92},
+            {"_id": "prod3", "quantity_sold": 25, "revenue": 3749.75}
+        ],
+        "hourly_breakdown": [
+            {"_id": 9, "sales": 1200.00, "transactions": 8},
+            {"_id": 10, "sales": 2400.00, "transactions": 15},
+            {"_id": 11, "sales": 3600.00, "transactions": 23}
+        ]
+    }
+
+@app.get("/api/analytics/inventory")
+async def get_inventory_analytics(
+    store_id: Optional[str] = None,
+    current_user: User = Depends(get_current_user)
+):
+    # Mock inventory analytics data
+    return {
+        "total_value": 75430.25,
+        "low_stock_count": 12,
+        "out_of_stock_count": 3,
+        "near_expiry_count": 8,
+        "wastage_value": 245.50,
+        "turnover_ratio": 2.5
+    }
 
 if __name__ == "__main__":
     import uvicorn
