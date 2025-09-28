@@ -22,6 +22,7 @@ import Suppliers from './components/Suppliers/Suppliers';
 import Purchasing from './components/Purchasing/Purchasing';
 import AdvancedInventory from './components/AdvancedInventory/AdvancedInventory';
 import Analytics from './components/Analytics/Analytics';
+import Settings from './components/Settings/Settings';
 
 // CSS
 import './App.css';
