@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
 
 // Store
 import useAuthStore from './store/authStore';
@@ -12,8 +11,8 @@ import useAuthStore from './store/authStore';
 import Login from './components/Auth/Login';
 import Layout from './components/Layout/Layout';
 import Dashboard from './components/Dashboard/Dashboard';
-import POS from './components/POS/POS';
-import Products from './components/Products/Products';
+import EnhancedPOS from './components/POS/EnhancedPOS';
+import EnhancedProducts from './components/Products/EnhancedProducts';
 import Customers from './components/Customers/Customers';
 import Sales from './components/Sales/Sales';
 import Inventory from './components/Inventory/Inventory';
@@ -27,42 +26,7 @@ import Settings from './components/Settings/Settings';
 // CSS
 import './App.css';
 
-// Configure axios for different environments
-let API_BASE_URL = '';
-
-// Check if we're in development (localhost) or production/preview
-if (window.location.hostname === 'localhost') {
-  // Development environment - use proxy
-  API_BASE_URL = '/api';
-} else {
-  // Production/preview environment - use /api with current domain
-  API_BASE_URL = '/api';
-}
-
-console.log('Environment:', window.location.hostname);
-console.log('Setting axios baseURL to:', API_BASE_URL);
-
-axios.defaults.baseURL = API_BASE_URL;
-
-// Add request interceptor to include auth token
-axios.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().token;
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-// Add response interceptor to handle auth errors
-axios.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      useAuthStore.getState().clearAuth();
-    }
-    return Promise.reject(error);
-  }
-);
+// Supabase is configured via lib/supabase.js
 
 // Create a client
 const queryClient = new QueryClient({
@@ -131,8 +95,8 @@ function App() {
             >
               <Route index element={<Navigate to="/dashboard" replace />} />
               <Route path="dashboard" element={<Dashboard />} />
-              <Route path="pos" element={<POS />} />
-              <Route path="products" element={<Products />} />
+              <Route path="pos" element={<EnhancedPOS />} />
+              <Route path="products" element={<EnhancedProducts />} />
               <Route path="customers" element={<Customers />} />
               <Route path="sales" element={<Sales />} />
               <Route path="inventory" element={<Inventory />} />

@@ -15,23 +15,17 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.username || !formData.password) {
       toast.error('Please fill in all fields');
       return;
     }
-    
-    console.log('Login form submitted with:', formData.username);
-    
+
     const result = await login(formData.username, formData.password);
-    
-    console.log('Login result:', result);
-    
+
     if (!result.success) {
-      console.error('Login failed with error:', result.error);
       toast.error(result.error || 'Login failed');
     } else {
-      console.log('Login successful, should redirect to dashboard');
       toast.success('Login successful!');
     }
   };
@@ -60,19 +54,19 @@ const Login = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('username')}
+                Email Address
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <User className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
-                  type="text"
+                  type="email"
                   name="username"
                   value={formData.username}
                   onChange={handleChange}
                   className="input pl-10"
-                  placeholder="Enter your username"
+                  placeholder="Enter your email"
                   required
                   data-testid="username-input"
                 />
@@ -132,8 +126,8 @@ const Login = () => {
           <div className="mt-6 p-4 bg-gray-50 rounded-lg">
             <h3 className="text-sm font-medium text-gray-700 mb-2">Demo Credentials:</h3>
             <div className="text-xs text-gray-600 space-y-1">
-              <div><strong>Admin:</strong> admin / admin123</div>
-              <div><strong>Cashier:</strong> cashier / cashier123</div>
+              <div><strong>Email:</strong> admin@pos.com</div>
+              <div><strong>Password:</strong> Set up via Supabase Auth</div>
             </div>
           </div>
         </div>

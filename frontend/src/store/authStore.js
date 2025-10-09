@@ -1,81 +1,128 @@
 import { create } from 'zustand';
-import axios from 'axios';
+import { persist } from 'zustand/middleware';
+import supabase from '../lib/supabase';
 
-const useAuthStore = create((set, get) => ({
-  user: null,
-  token: null,
-  isAuthenticated: false,
-  loading: false,
-  
-  login: async (username, password) => {
-    set({ loading: true });
-    try {
-      console.log('Starting login process...');
-      
-      const formData = new FormData();
-      formData.append('username', username);
-      formData.append('password', password);
-      
-      console.log('Sending login request to /auth/token');
-      console.log('Axios baseURL:', axios.defaults.baseURL);
-      console.log('Full URL will be:', (axios.defaults.baseURL || '') + '/auth/token');
-      
-      const response = await axios.post('/auth/token', formData);
-      const { access_token } = response.data;
-      
-      console.log('Login API successful, token received');
-      
-      // Get user info
-      const userResponse = await axios.get('/auth/me', {
-        headers: { Authorization: `Bearer ${access_token}` }
-      });
-      
-      console.log('User info API successful:', userResponse.data);
-      
-      set({
-        user: userResponse.data,
-        token: access_token,
-        isAuthenticated: true,
-        loading: false
-      });
-      
-      console.log('Auth state updated successfully');
-      
-      return { success: true };
-    } catch (error) {
-      console.error('Login error:', error);
-      set({ loading: false });
-      return { 
-        success: false, 
-        error: error.response?.data?.detail || error.message || 'Login failed' 
-      };
+const useAuthStore = create(
+  persist(
+    (set, get) => ({
+      user: null,
+      session: null,
+      isAuthenticated: false,
+      loading: false,
+
+      login: async (email, password) => {
+        set({ loading: true });
+        try {
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+
+          if (error) throw error;
+
+          const { data: userData, error: userError } = await supabase
+            .from('users')
+            .select('*')
+            .eq('email', email)
+            .maybeSingle();
+
+          if (userError) throw userError;
+
+          set({
+            user: userData,
+            session: data.session,
+            isAuthenticated: true,
+            loading: false
+          });
+
+          return { success: true };
+        } catch (error) {
+          console.error('Login error:', error);
+          set({ loading: false });
+          return {
+            success: false,
+            error: error.message || 'Login failed'
+          };
+        }
+      },
+
+      logout: async () => {
+        try {
+          await supabase.auth.signOut();
+          set({ user: null, session: null, isAuthenticated: false });
+        } catch (error) {
+          console.error('Logout error:', error);
+        }
+      },
+
+      checkAuth: async () => {
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+
+          if (!session) {
+            set({ user: null, session: null, isAuthenticated: false });
+            return false;
+          }
+
+          const { data: userData, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('email', session.user.email)
+            .maybeSingle();
+
+          if (error) throw error;
+
+          set({
+            user: userData,
+            session: session,
+            isAuthenticated: true
+          });
+
+          return true;
+        } catch (error) {
+          console.error('Auth check error:', error);
+          set({ user: null, session: null, isAuthenticated: false });
+          return false;
+        }
+      },
+
+      clearAuth: () => {
+        set({ user: null, session: null, isAuthenticated: false });
+      }
+    }),
+    {
+      name: 'auth-storage',
+      partialize: (state) => ({
+        user: state.user,
+        session: state.session,
+        isAuthenticated: state.isAuthenticated
+      })
     }
-  },
-  
-  logout: () => {
-    set({ user: null, token: null, isAuthenticated: false });
-  },
-  
-  checkAuth: async () => {
-    const { token } = get();
-    if (!token) return false;
-    
-    try {
-      const response = await axios.get('/auth/me', {
-        headers: { Authorization: `Bearer ${token}` }
+  )
+);
+
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_IN' && session) {
+    (async () => {
+      const { data: userData } = await supabase
+        .from('users')
+        .select('*')
+        .eq('email', session.user.email)
+        .maybeSingle();
+
+      useAuthStore.setState({
+        user: userData,
+        session: session,
+        isAuthenticated: true
       });
-      
-      set({ user: response.data, isAuthenticated: true });
-      return true;
-    } catch (error) {
-      set({ user: null, token: null, isAuthenticated: false });
-      return false;
-    }
-  },
-  
-  clearAuth: () => {
-    set({ user: null, token: null, isAuthenticated: false });
+    })();
+  } else if (event === 'SIGNED_OUT') {
+    useAuthStore.setState({
+      user: null,
+      session: null,
+      isAuthenticated: false
+    });
   }
-}));
+});
 
 export default useAuthStore;
